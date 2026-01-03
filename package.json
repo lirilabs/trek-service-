@@ -1,0 +1,21 @@
+{
+  "name": "github-storage-db",
+  "version": "1.0.0",
+  "description": "Serverless GitHub-backed JSON/SQL storage engine",
+  "type": "module",
+  "private": true,
+
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "node index.js",
+    "lint": "echo \"no lint configured\""
+  },
+
+  "engines": {
+    "node": ">=18"
+  },
+
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}
