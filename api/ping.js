@@ -1,10 +1,10 @@
-import { enableCORS } from "../lib/utils.js";
+import { cors } from "../lib/utils.js";
 
 export default function handler(req, res) {
-  enableCORS(res);
+  cors(res);
   res.json({
     ok: true,
-    service: "github-storage-db",
+    service: "trek-service-github-db",
     time: Date.now(),
   });
 }
