@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Trek Service API Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      background: #0d0d0d;
+      color: #00ff88;
+      font-family: monospace;
+      padding: 16px;
+    }
+    button {
+      background: #00ff88;
+      color: #000;
+      border: none;
+      padding: 10px 14px;
+      margin: 4px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    pre {
+      background: #000;
+      padding: 12px;
+      margin-top: 10px;
+      max-height: 240px;
+      overflow: auto;
+      border: 1px solid #00ff88;
+    }
+    .error {
+      color: #ff5555;
+      border-color: #ff5555;
+    }
+  </style>
+</head>
+<body>
+
+<h2>🚀 Trek Service – API Tester</h2>
+
+<div>
+  <button onclick="ping()">PING</button>
+  <button onclick="add()">ADD DATA</button>
+  <button onclick="read()">READ DATA</button>
+  <button onclick="clearAll()">CLEAR</button>
+</div>
+
+<h3>Response</h3>
+<pre id="output">Ready.</pre>
+
+<h3>Console</h3>
+<pre id="console" class="error">No errors.</pre>
+
+<script>
+  const BASE = "https://trek-service-git-main-sanjayys-projects.vercel.app";
+  const FILE = "data/tedst.json"; // same file you tested successfully
+
+  const output = document.getElementById("output");
+  const consoleBox = document.getElementById("console");
+
+  function show(data) {
+    output.textContent =
+      typeof data === "string" ? data : JSON.stringify(data, null, 2);
+  }
+
+  function log(msg) {
+    consoleBox.textContent += `\n[LOG] ${msg}`;
+  }
+
+  function error(msg) {
+    consoleBox.textContent += `\n[ERROR] ${msg}`;
+  }
+
+  async function safeFetch(url, options) {
+    try {
+      log(`Request → ${url}`);
+      const res = await fetch(url, options);
+      log(`Status ← ${res.status}`);
+      const text = await res.text();
+      return JSON.parse(text);
+    } catch (e) {
+      error(e.message);
+      throw e;
+    }
+  }
+
+  async function ping() {
+    const data = await safeFetch(`${BASE}/api/ping`);
+    show(data);
+  }
+
+  async function add() {
+    const data = await safeFetch(`${BASE}/api/db?file=${FILE}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        msg: "hello from html",
+        time: Date.now()
+      })
+    });
+    show(data);
+  }
+
+  async function read() {
+    const data = await safeFetch(`${BASE}/api/db?file=${FILE}`);
+    show(data);
+  }
+
+  function clearAll() {
+    output.textContent = "Cleared.";
+    consoleBox.textContent = "Console cleared.";
+  }
+
+  // Catch global JS errors
+  window.onerror = (m, s, l, c) => error(`${m} @ ${l}:${c}`);
+  window.onunhandledrejection = e => error(`Promise: ${e.reason}`);
+</script>
+
+</body>
+</html>
