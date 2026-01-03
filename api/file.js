@@ -1,12 +1,11 @@
 import GitHubStore from "../lib/githubStore.js";
-import { enableCORS, ping } from "../lib/utils.js";
+import { cors, ping } from "../lib/utils.js";
 
 const store = new GitHubStore();
 
 export default async function handler(req, res) {
-  enableCORS(res);
+  cors(res);
   ping(res, "file");
-
   if (req.method === "OPTIONS") return res.end();
 
   const path = req.query.path;
@@ -15,14 +14,15 @@ export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
       const file = await store.readFile(path);
-      return res.json({ ok: true, ping: "file", data: file?.data || null });
+      return res.json({ ok: true, data: file?.data || null });
     }
 
     if (req.method === "POST") {
       const body = await readBody(req);
       const old = await store.readFile(path);
+
       await store.writeFile(path, body, old?.sha, "write file");
-      return res.json({ ok: true, ping: "file" });
+      return res.json({ ok: true });
     }
 
     res.status(405).end();
